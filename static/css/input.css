@@ -1,0 +1,168 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for Lucide theme */
+@layer components {
+  /* Calendar day base */
+  .cal-day {
+    @apply relative p-1 rounded cursor-pointer transition-colors;
+  }
+
+  /* Day states */
+  .cal-day--other {
+    @apply text-base-content/30;
+  }
+  .cal-day--today {
+    @apply bg-primary text-primary-content font-bold rounded-full;
+  }
+  .cal-day--weekend {
+    @apply text-error;
+  }
+  .cal-day--holiday {
+    @apply bg-success/20;
+  }
+  .cal-day--school {
+    @apply bg-info/10;
+  }
+
+  /* Moon indicator */
+  .cal-moon {
+    @apply absolute -top-1 -right-1 text-xs;
+  }
+
+  /* Year navigation */
+  .year-nav {
+    @apply flex justify-between items-center mb-6;
+  }
+
+  /* Stats responsive */
+  @screen md {
+    .stats {
+      @apply grid-flow-col;
+    }
+  }
+
+  /* Calendar tooltip */
+  .calendar-tooltip {
+    max-width: 250px;
+  }
+  .calendar-tooltip.visible {
+    @apply opacity-100;
+  }
+  .calendar-tooltip.pinned {
+    @apply pointer-events-auto;
+  }
+
+  /* Soft shadow utility */
+  .shadow-soft {
+    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.08);
+  }
+  .shadow-soft-lg {
+    box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Card enhancements for Lucide theme */
+  .card-lucide {
+    @apply bg-base-200 shadow-soft border-0 transition-shadow hover:shadow-soft-lg;
+  }
+
+  /* Button enhancements */
+  .btn-coral {
+    @apply bg-primary text-primary-content hover:bg-primary/90 border-0;
+  }
+  .btn-coral-outline {
+    @apply bg-transparent text-primary border border-primary hover:bg-primary hover:text-primary-content;
+  }
+
+  /* Stats enhancements */
+  .stats-lucide {
+    @apply bg-base-200 shadow-soft border-0;
+  }
+  .stats-lucide .stat {
+    @apply border-base-300;
+  }
+
+  /* Table enhancements */
+  .table-lucide {
+    @apply bg-transparent;
+  }
+  .table-lucide tbody tr {
+    @apply hover:bg-base-200/50;
+  }
+  .table-lucide tbody tr:nth-child(even) {
+    @apply bg-base-200/30;
+  }
+
+  /* Badge pill style */
+  .badge-pill {
+    @apply rounded-full px-3;
+  }
+
+  /* Navigation link styling */
+  .nav-link {
+    @apply text-base-content/70 hover:text-primary transition-colors;
+  }
+  .nav-link-active {
+    @apply text-primary font-medium;
+  }
+
+  /* Desktop dropdown navigation */
+  .nav-dropdown__panel {
+    @apply invisible opacity-0 absolute top-full left-0 pt-2 transition-all duration-150 z-50;
+  }
+  .nav-dropdown:hover .nav-dropdown__panel,
+  .nav-dropdown:focus-within .nav-dropdown__panel {
+    @apply visible opacity-100;
+  }
+  .nav-dropdown--end .nav-dropdown__panel {
+    @apply left-auto right-0;
+  }
+  .nav-dropdown__grid {
+    @apply grid grid-cols-2 gap-1;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(var(--grid-rows, 6), auto);
+  }
+
+  /* Mobile accordion navigation */
+  .mob-nav-item > input[type="checkbox"] {
+    @apply hidden;
+  }
+  .mob-nav-item > input:checked ~ .mob-nav-years {
+    @apply block;
+  }
+  .mob-nav-years {
+    @apply hidden;
+  }
+  .mob-nav-item > input:checked ~ div .mob-nav-chevron {
+    @apply rotate-180;
+  }
+
+  /* Hero section styling */
+  .hero-lucide {
+    @apply bg-base-200 rounded-2xl;
+  }
+
+  /* Quick link cards */
+  .quick-link-card {
+    @apply bg-base-200 shadow-soft border-0 transition-all hover:shadow-soft-lg hover:-translate-y-1;
+  }
+  .quick-link-card:hover {
+    @apply bg-base-300/50;
+  }
+
+  /* Section headings with two-tone effect */
+  .heading-two-tone {
+    @apply text-base-content;
+  }
+  .heading-two-tone .highlight {
+    @apply text-primary;
+  }
+}
+
+@layer utilities {
+  /* Capitalize first letter */
+  .capitalize-first::first-letter {
+    text-transform: uppercase;
+  }
+}
