@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     populateHolidayRelativeText();
     setupTooltips();
     initRegionFilter();
+    initYearMenuFilter();
 });
 
 /**
@@ -554,6 +555,58 @@ function joinWithDirection(parts, isPast, t) {
 }
 
 /**
+ * Filter year menu items based on browser's current date.
+ * Shows years within [currentYear - pastYears, currentYear + futureYears].
+ */
+function initYearMenuFilter() {
+    const header = document.querySelector('header[data-menu-future-years]');
+    if (!header) return;
+
+    const futureYears = parseInt(header.dataset.menuFutureYears, 10) || 3;
+    const pastYears = parseInt(header.dataset.menuPastYears, 10) || 1;
+    const currentYear = new Date().getFullYear();
+
+    const minYear = currentYear - pastYears;
+    const maxYear = currentYear + futureYears;
+
+    // Find all year menu links
+    const yearLinks = document.querySelectorAll('[data-menu-year]');
+    yearLinks.forEach(link => {
+        const year = parseInt(link.dataset.menuYear, 10);
+        if (year < minYear || year > maxYear) {
+            // Hide the link's immediate parent <li> if it exists (mobile nav),
+            // otherwise hide just the link itself (desktop nav)
+            const parentLi = link.parentElement;
+            if (parentLi && parentLi.tagName === 'LI') {
+                parentLi.style.display = 'none';
+            } else {
+                link.style.display = 'none';
+            }
+        }
+    });
+
+    // Recalculate grid rows for each dropdown after filtering
+    document.querySelectorAll('.nav-dropdown__grid').forEach(grid => {
+        // Count visible items (links not hidden, and parent LIs not hidden)
+        const allLinks = grid.querySelectorAll('[data-menu-year]');
+        let visibleCount = 0;
+        allLinks.forEach(link => {
+            const parentLi = link.parentElement;
+            if (parentLi && parentLi.tagName === 'LI') {
+                if (parentLi.style.display !== 'none') visibleCount++;
+            } else {
+                if (link.style.display !== 'none') visibleCount++;
+            }
+        });
+
+        if (visibleCount > 0) {
+            const rowCount = Math.ceil(visibleCount / 2);
+            grid.style.setProperty('--grid-rows', rowCount);
+        }
+    });
+}
+
+/**
  * Initialize region filter for school holidays page
  */
 function initRegionFilter() {
@@ -561,17 +614,26 @@ function initRegionFilter() {
     if (!filterContainer) return;
 
     const checkboxes = filterContainer.querySelectorAll('input[type="checkbox"]');
-    const resetBtn = filterContainer.querySelector('[data-reset-regions]');
+    const selectAllBtn = filterContainer.querySelector('[data-select-all-regions]');
+    const selectNoneBtn = filterContainer.querySelector('[data-select-none-regions]');
 
     // Add change listeners to checkboxes
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', filterSchoolHolidays);
     });
 
-    // Add click listener to reset button
-    if (resetBtn) {
-        resetBtn.addEventListener('click', () => {
+    // Add click listener to select all button
+    if (selectAllBtn) {
+        selectAllBtn.addEventListener('click', () => {
             checkboxes.forEach(cb => cb.checked = true);
+            filterSchoolHolidays();
+        });
+    }
+
+    // Add click listener to select none button
+    if (selectNoneBtn) {
+        selectNoneBtn.addEventListener('click', () => {
+            checkboxes.forEach(cb => cb.checked = false);
             filterSchoolHolidays();
         });
     }
@@ -617,11 +679,17 @@ function filterSchoolHolidays() {
         }
     });
 
-    // Update reset button visibility
-    const resetBtn = filterContainer.querySelector('[data-reset-regions]');
-    if (resetBtn) {
-        const allCheckboxes = filterContainer.querySelectorAll('input[type="checkbox"]');
-        const allChecked = [...allCheckboxes].every(cb => cb.checked);
-        resetBtn.style.opacity = allChecked ? '0.5' : '1';
+    // Update button visibility based on selection state
+    const selectAllBtn = filterContainer.querySelector('[data-select-all-regions]');
+    const selectNoneBtn = filterContainer.querySelector('[data-select-none-regions]');
+    const allCheckboxes = filterContainer.querySelectorAll('input[type="checkbox"]');
+    const allChecked = [...allCheckboxes].every(cb => cb.checked);
+    const noneChecked = [...allCheckboxes].every(cb => !cb.checked);
+
+    if (selectAllBtn) {
+        selectAllBtn.style.opacity = allChecked ? '0.5' : '1';
+    }
+    if (selectNoneBtn) {
+        selectNoneBtn.style.opacity = noneChecked ? '0.5' : '1';
     }
 }
