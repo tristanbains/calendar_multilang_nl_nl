@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.kalender.nl/sitemap.xml
+Sitemap: https://www.handige-kalenders.nl/sitemap.xml

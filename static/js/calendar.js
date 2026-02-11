@@ -192,8 +192,6 @@ async function showTooltip(event, tooltip) {
     const dateStr = el.dataset.date;
     const weekday = el.dataset.weekday;
     const weekNumber = el.dataset.week;
-    const holidaysJson = el.dataset.holidays;
-    const schoolHolidaysJson = el.dataset.schoolHolidays;
 
     if (!dateStr || !window.CALENDAR_TRANSLATIONS) return;
 
@@ -220,23 +218,21 @@ async function showTooltip(event, tooltip) {
         }
     }
 
-    // Public holidays with 🎉 icon
+    // Get all day data from lazy-loaded JSON (holidays, school, sun, moon)
+    const year = targetDate.getFullYear();
+    const dayData = await getDayData(year, dateStr);
+
+    // Public holidays with 🎉 icon (lazy loaded)
     const publicHolidaysEl = tooltip.querySelector('[data-field="public-holidays"]');
     if (publicHolidaysEl) {
-        if (holidaysJson) {
-            try {
-                const holidays = JSON.parse(holidaysJson);
-                // Filter to public holidays only
-                const publicHolidays = holidays.filter(h => h.type === 'public');
-                if (publicHolidays.length > 0) {
-                    publicHolidaysEl.innerHTML = publicHolidays
-                        .map(h => '🎉 ' + h.name)
-                        .join('<br>');
-                    publicHolidaysEl.style.display = '';
-                } else {
-                    publicHolidaysEl.style.display = 'none';
-                }
-            } catch (e) {
+        if (dayData && dayData.holidays) {
+            const publicHolidays = dayData.holidays.filter(h => h.type === 'public');
+            if (publicHolidays.length > 0) {
+                publicHolidaysEl.innerHTML = publicHolidays
+                    .map(h => '🎉 ' + h.name)
+                    .join('<br>');
+                publicHolidaysEl.style.display = '';
+            } else {
                 publicHolidaysEl.style.display = 'none';
             }
         } else {
@@ -244,22 +240,17 @@ async function showTooltip(event, tooltip) {
         }
     }
 
-    // Observances with 💝 icon
+    // Observances with 💝 icon (lazy loaded)
     const observancesEl = tooltip.querySelector('[data-field="observances"]');
     if (observancesEl) {
-        if (holidaysJson) {
-            try {
-                const holidays = JSON.parse(holidaysJson);
-                const observances = holidays.filter(h => h.type === 'observance');
-                if (observances.length > 0) {
-                    observancesEl.innerHTML = observances
-                        .map(h => '💝 ' + h.name)
-                        .join('<br>');
-                    observancesEl.style.display = '';
-                } else {
-                    observancesEl.style.display = 'none';
-                }
-            } catch (e) {
+        if (dayData && dayData.holidays) {
+            const observances = dayData.holidays.filter(h => h.type === 'observance');
+            if (observances.length > 0) {
+                observancesEl.innerHTML = observances
+                    .map(h => '💝 ' + h.name)
+                    .join('<br>');
+                observancesEl.style.display = '';
+            } else {
                 observancesEl.style.display = 'none';
             }
         } else {
@@ -267,36 +258,23 @@ async function showTooltip(event, tooltip) {
         }
     }
 
-    // School holidays with 🏫 icon and regions
+    // School holidays with 🏫 icon and regions (lazy loaded)
     const schoolHolidaysEl = tooltip.querySelector('[data-field="school-holidays"]');
     if (schoolHolidaysEl) {
-        if (schoolHolidaysJson) {
-            try {
-                const schoolHolidays = JSON.parse(schoolHolidaysJson);
-                if (schoolHolidays.length > 0) {
-                    schoolHolidaysEl.innerHTML = schoolHolidays
-                        .map(sh => {
-                            const regionNames = sh.regions
-                                .map(rid => window.SCHOOL_REGIONS && window.SCHOOL_REGIONS[rid] ? window.SCHOOL_REGIONS[rid] : rid)
-                                .join(', ');
-                            return '🏫 ' + sh.name + ' (' + regionNames + ')';
-                        })
-                        .join('<br>');
-                    schoolHolidaysEl.style.display = '';
-                } else {
-                    schoolHolidaysEl.style.display = 'none';
-                }
-            } catch (e) {
-                schoolHolidaysEl.style.display = 'none';
-            }
+        if (dayData && dayData.school && dayData.school.length > 0) {
+            schoolHolidaysEl.innerHTML = dayData.school
+                .map(sh => {
+                    const regionNames = sh.regions
+                        .map(rid => window.SCHOOL_REGIONS && window.SCHOOL_REGIONS[rid] ? window.SCHOOL_REGIONS[rid] : rid)
+                        .join(', ');
+                    return '🏫 ' + sh.name + ' (' + regionNames + ')';
+                })
+                .join('<br>');
+            schoolHolidaysEl.style.display = '';
         } else {
             schoolHolidaysEl.style.display = 'none';
         }
     }
-
-    // Get sun/moon data from lazy-loaded JSON
-    const year = targetDate.getFullYear();
-    const dayData = await getDayData(year, dateStr);
 
     // Sun times with ☀️ icon (lazy loaded)
     const sunTimesEl = tooltip.querySelector('[data-field="sun-times"]');

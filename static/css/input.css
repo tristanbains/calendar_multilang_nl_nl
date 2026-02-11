@@ -2,6 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Self-hosted Inter font */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/inter/inter-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/inter/inter-500.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/inter/inter-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/inter/inter-700.woff2') format('woff2');
+}
+
 /* Custom styles for Lucide theme */
 @layer components {
   /* Calendar day base */
@@ -109,14 +142,11 @@
 
   /* Desktop dropdown navigation */
   .nav-dropdown__panel {
-    @apply invisible opacity-0 absolute top-full left-0 pt-2 transition-all duration-150 z-50;
+    @apply invisible opacity-0 absolute top-full right-0 pt-2 transition-all duration-150 z-50;
   }
   .nav-dropdown:hover .nav-dropdown__panel,
   .nav-dropdown:focus-within .nav-dropdown__panel {
     @apply visible opacity-100;
-  }
-  .nav-dropdown--end .nav-dropdown__panel {
-    @apply left-auto right-0;
   }
   .nav-dropdown__grid {
     @apply grid grid-cols-2 gap-1;
