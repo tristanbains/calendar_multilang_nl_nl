@@ -8,6 +8,7 @@ let dayDataCache = {};
 document.addEventListener('DOMContentLoaded', function() {
     highlightToday();
     highlightCurrentWeek();
+    highlightSunTableToday();
     populateHolidayRelativeText();
     setupTooltips();
     initRegionFilter();
@@ -87,6 +88,25 @@ function highlightCurrentWeek() {
             }
             relCell.innerHTML = '<span class="text-base-content/40 text-xs group-hover/row:text-white/60">' +
                 text + '</span>';
+        }
+    });
+}
+
+/**
+ * Highlight today's row in sun/sunset table
+ */
+function highlightSunTableToday() {
+    const today = new Date();
+    const todayISO = today.toISOString().split('T')[0];
+    const t = window.CALENDAR_TRANSLATIONS || {};
+
+    document.querySelectorAll('[data-sun-date="' + todayISO + '"]').forEach(el => {
+        el.classList.add('bg-primary/10', 'font-semibold', 'ring-1', 'ring-primary/30');
+
+        const badge = el.querySelector('.sun-today-text');
+        if (badge && t.relative && t.relative.today) {
+            badge.innerHTML = '<span class="badge badge-primary badge-xs rounded-full ml-2">' +
+                t.relative.today + '</span>';
         }
     });
 }
